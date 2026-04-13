@@ -16,12 +16,14 @@ class _CurriculoState extends State<Curriculo> {
   List<String> descricoesEscolaridade = ["Instituto Federal Catarinense", "Instituto Federal Catarinense"];
 
   List<String> titulosProjetos = ["App de Gerenciamento de gastos energéticos", "App de Incentivo ao transporte público"];
-  List<String> descricoesProjetos = [ "Aplicativo realizado em um projeto escolar para controle de gastos energéticos",
+  List<String> descricoesProjetos = [
+    "Aplicativo realizado em um projeto escolar para controle de gastos energéticos",
     "Aplicativo realizado em um hackathon para incentivar o uso do transporte público.",
   ];
 
   List<String> titulosRecomendacoes = ["Prof. Heitor Scalco Neto", "Prof. Danimar Veriato"];
-  List<String> descricoesRecomendacoes = ["\"Excelente aluno, dedicado e sempre disposto a aprender, com ótimas habilidades de trabalho em equipe e resoluções de problemas.\"",
+  List<String> descricoesRecomendacoes = [
+    "\"Excelente aluno, dedicado e sempre disposto a aprender, com ótimas habilidades de trabalho em equipe e resoluções de problemas.\"",
     "\"Yuri é um profissional talentoso e dedicado, com uma paixão por tecnologia e inovação. Ele tem habilidades técnicas impressionantes e é um excelente colaborador em equipe.\"",
   ];
 
@@ -73,82 +75,58 @@ class _CurriculoState extends State<Curriculo> {
               width: 600,
               child: Text(
                 "Olá, me chamo Yuri, sou uma pessoa dedicada e apaixonada por tecnologia.",
+                textAlign: TextAlign.center,
               ),
             ),
           ),
           SizedBox(height: 20),
           Divider(),
           SizedBox(height: 10),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.school),
-              title: Text("Escolaridade"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Escolaridade(
-                          informacoes: informacoes,
-                          titulos: titulosEscolaridade,
-                          descricoes: descricoesEscolaridade,
-                          onDeletar: (index) {
-                            setState(() {
-                              informacoes.removeAt(index);
-                            });
-                          },
-                        )),
-              ).then((_) {
-                setState(() {});
-              }),
+          _buildMenuCard(
+            context,
+            Icons.school,
+            "Escolaridade",
+            () => Escolaridade(
+              informacoes: informacoes,
+              titulos: titulosEscolaridade,
+              descricoes: descricoesEscolaridade,
+              onDeletar: (index) => setState(() => informacoes.removeAt(index)),
             ),
           ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.work),
-              title: Text("Projetos"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Projetos(
-                          informacoes: informacoes,
-                          titulos: titulosProjetos,
-                          descricoes: descricoesProjetos,
-                          onDeletar: (index) {
-                            setState(() {
-                              informacoes.removeAt(index);
-                            });
-                          },
-                        )),
-              ).then((_) {
-                setState(() {});
-              }),
+          _buildMenuCard(
+            context,
+            Icons.work,
+            "Projetos",
+            () => Projetos(
+              informacoes: informacoes,
+              titulos: titulosProjetos,
+              descricoes: descricoesProjetos,
+              onDeletar: (index) => setState(() => informacoes.removeAt(index)),
             ),
           ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.star),
-              title: Text("Recomendações"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Recomendacoes(
-                          informacoes: informacoes,
-                          titulos: titulosRecomendacoes,
-                          descricoes: descricoesRecomendacoes,
-                          onDeletar: (index) {
-                            setState(() {
-                              informacoes.removeAt(index);
-                            });
-                          },
-                        )),
-              ).then((_) {
-                setState(() {});
-              }),
+          _buildMenuCard(
+            context,
+            Icons.star,
+            "Recomendações",
+            () => Recomendacoes(
+              informacoes: informacoes,
+              titulos: titulosRecomendacoes,
+              descricoes: descricoesRecomendacoes,
+              onDeletar: (index) => setState(() => informacoes.removeAt(index)),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMenuCard(BuildContext context, IconData icon, String title, Widget Function() builder) {
+    return Card(
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        trailing: Icon(Icons.chevron_right),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => builder())).then((_) => setState(() {})),
       ),
     );
   }
@@ -173,15 +151,15 @@ class Informacoes {
 }
 
 class FormularioCadastro extends StatelessWidget {
+  final TextEditingController tituloEscolaridade = TextEditingController();
+  final TextEditingController descricaoEscolaridade = TextEditingController();
+  final TextEditingController tituloProjeto = TextEditingController();
+  final TextEditingController descricaoProjeto = TextEditingController();
+  final TextEditingController tituloRecomendacao = TextEditingController();
+  final TextEditingController descricaoRecomendacao = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController tituloEscolaridade = TextEditingController();
-    TextEditingController descricaoEscolaridade = TextEditingController();
-    TextEditingController tituloProjeto = TextEditingController();
-    TextEditingController descricaoProjeto = TextEditingController();
-    TextEditingController tituloRecomendacao = TextEditingController();
-    TextEditingController descricaoRecomendacao = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Formulário de Cadastro"),
@@ -196,17 +174,7 @@ class FormularioCadastro extends StatelessWidget {
           Text("Escolaridade - Descrição:"),
           TextField(controller: descricaoEscolaridade),
           ElevatedButton(
-            onPressed: () {
-              Informacoes info = Informacoes(
-                tituloEscolaridade.text,
-                descricaoEscolaridade.text,
-                '',
-                '',
-                '',
-                '',
-              );
-              Navigator.pop(context, info);
-            },
+            onPressed: () => Navigator.pop(context, Informacoes(tituloEscolaridade.text, descricaoEscolaridade.text, '', '', '', '')),
             child: Text("Salvar Escolaridade"),
           ),
           SizedBox(height: 10),
@@ -215,17 +183,7 @@ class FormularioCadastro extends StatelessWidget {
           Text("Projeto - Descrição:"),
           TextField(controller: descricaoProjeto),
           ElevatedButton(
-            onPressed: () {
-              Informacoes info = Informacoes(
-                '',
-                '',
-                tituloProjeto.text,
-                descricaoProjeto.text,
-                '',
-                '',
-              );
-              Navigator.pop(context, info);
-            },
+            onPressed: () => Navigator.pop(context, Informacoes('', '', tituloProjeto.text, descricaoProjeto.text, '', '')),
             child: Text("Salvar Projeto"),
           ),
           SizedBox(height: 10),
@@ -234,17 +192,7 @@ class FormularioCadastro extends StatelessWidget {
           Text("Recomendação - Descrição:"),
           TextField(controller: descricaoRecomendacao),
           ElevatedButton(
-            onPressed: () {
-              Informacoes info = Informacoes(
-                '',
-                '',
-                '',
-                '',
-                tituloRecomendacao.text,
-                descricaoRecomendacao.text,
-              );
-              Navigator.pop(context, info);
-            },
+            onPressed: () => Navigator.pop(context, Informacoes('', '', '', '', tituloRecomendacao.text, descricaoRecomendacao.text)),
             child: Text("Salvar Recomendação"),
           ),
           SizedBox(height: 20),
@@ -254,17 +202,17 @@ class FormularioCadastro extends StatelessWidget {
               backgroundColor: const Color.fromARGB(255, 46, 57, 124),
               foregroundColor: Colors.white,
             ),
-            onPressed: () {
-              Informacoes info = Informacoes(
+            onPressed: () => Navigator.pop(
+              context,
+              Informacoes(
                 tituloEscolaridade.text,
                 descricaoEscolaridade.text,
                 tituloProjeto.text,
                 descricaoProjeto.text,
                 tituloRecomendacao.text,
                 descricaoRecomendacao.text,
-              );
-              Navigator.pop(context, info);
-            },
+              ),
+            ),
             child: Text("Salvar Todos"),
           ),
         ],
@@ -279,11 +227,7 @@ class Escolaridade extends StatefulWidget {
   final List<String> descricoes;
   final Function(int) onDeletar;
 
-  Escolaridade(
-      {required this.informacoes,
-      required this.titulos,
-      required this.descricoes,
-      required this.onDeletar});
+  Escolaridade({required this.informacoes, required this.titulos, required this.descricoes, required this.onDeletar});
 
   @override
   State<Escolaridade> createState() => _EscolaridadeState();
@@ -292,11 +236,8 @@ class Escolaridade extends StatefulWidget {
 class _EscolaridadeState extends State<Escolaridade> {
   @override
   Widget build(BuildContext context) {
-    final cadastrados = widget.informacoes
-        .asMap()
-        .entries
-        .where((e) => e.value.tituloEscolaridade.isNotEmpty)
-        .toList();
+    final cadastrados = widget.informacoes.asMap().entries.where((e) => e.value.tituloEscolaridade.isNotEmpty).toList();
+    final totalFixo = widget.titulos.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -304,34 +245,31 @@ class _EscolaridadeState extends State<Escolaridade> {
         backgroundColor: const Color.fromARGB(255, 46, 57, 124),
         foregroundColor: Colors.white,
       ),
-      body: ListView(
-        children: [
-          ...widget.titulos.asMap().entries.map((e) => ListTile(
-                title: Text(e.value),
-                subtitle: Text(widget.descricoes[e.key]),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      widget.titulos.removeAt(e.key);
-                      widget.descricoes.removeAt(e.key);
-                    });
-                  },
-                ),
-              )),
-          ...cadastrados.map((e) => ListTile(
-                title: Text(e.value.tituloEscolaridade),
-                subtitle: Text(e.value.descricaoEscolaridade),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      widget.onDeletar(e.key);
-                    });
-                  },
-                ),
-              )),
-        ],
+      body: ListView.builder(
+        itemCount: totalFixo + cadastrados.length,
+        itemBuilder: (context, index) {
+          if (index < totalFixo) {
+            return Dismissible(
+              key: Key('esc_fixo_${widget.titulos[index]}_$index'),
+              direction: DismissDirection.endToStart,
+              background: Container(color: Colors.red, alignment: Alignment.centerRight, padding: EdgeInsets.only(right: 20), child: Icon(Icons.delete, color: Colors.white)),
+              onDismissed: (_) => setState(() {
+                widget.titulos.removeAt(index);
+                widget.descricoes.removeAt(index);
+              }),
+              child: ListTile(title: Text(widget.titulos[index]), subtitle: Text(widget.descricoes[index])),
+            );
+          } else {
+            final entry = cadastrados[index - totalFixo];
+            return Dismissible(
+              key: Key('esc_cad_${entry.key}'),
+              direction: DismissDirection.endToStart,
+              background: Container(color: Colors.red, alignment: Alignment.centerRight, padding: EdgeInsets.only(right: 20), child: Icon(Icons.delete, color: Colors.white)),
+              onDismissed: (_) => setState(() => widget.onDeletar(entry.key)),
+              child: ListTile(title: Text(entry.value.tituloEscolaridade), subtitle: Text(entry.value.descricaoEscolaridade)),
+            );
+          }
+        },
       ),
     );
   }
@@ -343,11 +281,7 @@ class Projetos extends StatefulWidget {
   final List<String> descricoes;
   final Function(int) onDeletar;
 
-  Projetos(
-      {required this.informacoes,
-      required this.titulos,
-      required this.descricoes,
-      required this.onDeletar});
+  Projetos({required this.informacoes, required this.titulos, required this.descricoes, required this.onDeletar});
 
   @override
   State<Projetos> createState() => _ProjetosState();
@@ -356,11 +290,8 @@ class Projetos extends StatefulWidget {
 class _ProjetosState extends State<Projetos> {
   @override
   Widget build(BuildContext context) {
-    final cadastrados = widget.informacoes
-        .asMap()
-        .entries
-        .where((e) => e.value.tituloProjeto.isNotEmpty)
-        .toList();
+    final cadastrados = widget.informacoes.asMap().entries.where((e) => e.value.tituloProjeto.isNotEmpty).toList();
+    final totalFixo = widget.titulos.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -368,34 +299,31 @@ class _ProjetosState extends State<Projetos> {
         backgroundColor: const Color.fromARGB(255, 46, 57, 124),
         foregroundColor: Colors.white,
       ),
-      body: ListView(
-        children: [
-          ...widget.titulos.asMap().entries.map((e) => ListTile(
-                title: Text(e.value),
-                subtitle: Text(widget.descricoes[e.key]),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      widget.titulos.removeAt(e.key);
-                      widget.descricoes.removeAt(e.key);
-                    });
-                  },
-                ),
-              )),
-          ...cadastrados.map((e) => ListTile(
-                title: Text(e.value.tituloProjeto),
-                subtitle: Text(e.value.descricaoProjeto),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      widget.onDeletar(e.key);
-                    });
-                  },
-                ),
-              )),
-        ],
+      body: ListView.builder(
+        itemCount: totalFixo + cadastrados.length,
+        itemBuilder: (context, index) {
+          if (index < totalFixo) {
+            return Dismissible(
+              key: Key('proj_fixo_${widget.titulos[index]}_$index'),
+              direction: DismissDirection.endToStart,
+              background: Container(color: Colors.red, alignment: Alignment.centerRight, padding: EdgeInsets.only(right: 20), child: Icon(Icons.delete, color: Colors.white)),
+              onDismissed: (_) => setState(() {
+                widget.titulos.removeAt(index);
+                widget.descricoes.removeAt(index);
+              }),
+              child: ListTile(title: Text(widget.titulos[index]), subtitle: Text(widget.descricoes[index])),
+            );
+          } else {
+            final entry = cadastrados[index - totalFixo];
+            return Dismissible(
+              key: Key('proj_cad_${entry.key}'),
+              direction: DismissDirection.endToStart,
+              background: Container(color: Colors.red, alignment: Alignment.centerRight, padding: EdgeInsets.only(right: 20), child: Icon(Icons.delete, color: Colors.white)),
+              onDismissed: (_) => setState(() => widget.onDeletar(entry.key)),
+              child: ListTile(title: Text(entry.value.tituloProjeto), subtitle: Text(entry.value.descricaoProjeto)),
+            );
+          }
+        },
       ),
     );
   }
@@ -407,11 +335,7 @@ class Recomendacoes extends StatefulWidget {
   final List<String> descricoes;
   final Function(int) onDeletar;
 
-  Recomendacoes(
-      {required this.informacoes,
-      required this.titulos,
-      required this.descricoes,
-      required this.onDeletar});
+  Recomendacoes({required this.informacoes, required this.titulos, required this.descricoes, required this.onDeletar});
 
   @override
   State<Recomendacoes> createState() => _RecomendacoesState();
@@ -420,11 +344,8 @@ class Recomendacoes extends StatefulWidget {
 class _RecomendacoesState extends State<Recomendacoes> {
   @override
   Widget build(BuildContext context) {
-    final cadastrados = widget.informacoes
-        .asMap()
-        .entries
-        .where((e) => e.value.tituloRecomendacao.isNotEmpty)
-        .toList();
+    final cadastrados = widget.informacoes.asMap().entries.where((e) => e.value.tituloRecomendacao.isNotEmpty).toList();
+    final totalFixo = widget.titulos.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -432,34 +353,31 @@ class _RecomendacoesState extends State<Recomendacoes> {
         backgroundColor: const Color.fromARGB(255, 46, 57, 124),
         foregroundColor: Colors.white,
       ),
-      body: ListView(
-        children: [
-          ...widget.titulos.asMap().entries.map((e) => ListTile(
-                title: Text(e.value),
-                subtitle: Text(widget.descricoes[e.key]),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      widget.titulos.removeAt(e.key);
-                      widget.descricoes.removeAt(e.key);
-                    });
-                  },
-                ),
-              )),
-          ...cadastrados.map((e) => ListTile(
-                title: Text(e.value.tituloRecomendacao),
-                subtitle: Text(e.value.descricaoRecomendacao),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      widget.onDeletar(e.key);
-                    });
-                  },
-                ),
-              )),
-        ],
+      body: ListView.builder(
+        itemCount: totalFixo + cadastrados.length,
+        itemBuilder: (context, index) {
+          if (index < totalFixo) {
+            return Dismissible(
+              key: Key('rec_fixo_${widget.titulos[index]}_$index'),
+              direction: DismissDirection.endToStart,
+              background: Container(color: Colors.red, alignment: Alignment.centerRight, padding: EdgeInsets.only(right: 20), child: Icon(Icons.delete, color: Colors.white)),
+              onDismissed: (_) => setState(() {
+                widget.titulos.removeAt(index);
+                widget.descricoes.removeAt(index);
+              }),
+              child: ListTile(title: Text(widget.titulos[index]), subtitle: Text(widget.descricoes[index])),
+            );
+          } else {
+            final entry = cadastrados[index - totalFixo];
+            return Dismissible(
+              key: Key('rec_cad_${entry.key}'),
+              direction: DismissDirection.endToStart,
+              background: Container(color: Colors.red, alignment: Alignment.centerRight, padding: EdgeInsets.only(right: 20), child: Icon(Icons.delete, color: Colors.white)),
+              onDismissed: (_) => setState(() => widget.onDeletar(entry.key)),
+              child: ListTile(title: Text(entry.value.tituloRecomendacao), subtitle: Text(entry.value.descricaoRecomendacao)),
+            );
+          }
+        },
       ),
     );
   }
