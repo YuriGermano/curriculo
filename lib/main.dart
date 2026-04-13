@@ -146,24 +146,57 @@ class FormularioCadastro extends StatelessWidget {
           TextField(controller: tituloEscolaridade),
           Text("Escolaridade - Descrição:"),
           TextField(controller: descricaoEscolaridade),
-
+          ElevatedButton(
+            onPressed: () {
+              Informacoes info = Informacoes(
+                tituloEscolaridade.text,
+                descricaoEscolaridade.text,
+                '', '', '', '',
+              );
+              Navigator.pop(context, info);
+            },
+            child: Text("Salvar Escolaridade"),
+          ),
           SizedBox(height: 10),
-
           Text("Projeto - Título:"),
           TextField(controller: tituloProjeto),
           Text("Projeto - Descrição:"),
           TextField(controller: descricaoProjeto),
-
+          ElevatedButton(
+            onPressed: () {
+              Informacoes info = Informacoes(
+                '', '',
+                tituloProjeto.text,
+                descricaoProjeto.text,
+                '', '',
+              );
+              Navigator.pop(context, info);
+            },
+            child: Text("Salvar Projeto"),
+          ),
           SizedBox(height: 10),
-
           Text("Recomendação - Título:"),
           TextField(controller: tituloRecomendacao),
           Text("Recomendação - Descrição:"),
           TextField(controller: descricaoRecomendacao),
-
-          SizedBox(height: 20),
-
           ElevatedButton(
+            onPressed: () {
+              Informacoes info = Informacoes(
+                '', '', '', '',
+                tituloRecomendacao.text,
+                descricaoRecomendacao.text,
+              );
+              Navigator.pop(context, info);
+            },
+            child: Text("Salvar Recomendação"),
+          ),
+          SizedBox(height: 20),
+          Divider(),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 46, 57, 124),
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
               Informacoes info = Informacoes(
                 tituloEscolaridade.text,
@@ -175,7 +208,7 @@ class FormularioCadastro extends StatelessWidget {
               );
               Navigator.pop(context, info);
             },
-            child: Text("Salvar"),
+            child: Text("Salvar Todos"),
           ),
         ],
       ),
@@ -184,7 +217,7 @@ class FormularioCadastro extends StatelessWidget {
 }
 
 class Escolaridade extends StatelessWidget {
-  List<Informacoes> informacoes;
+  final List<Informacoes> informacoes;
 
   Escolaridade({required this.informacoes});
 
@@ -206,10 +239,12 @@ class Escolaridade extends StatelessWidget {
             title: Text("Técnico em Informática para internet"),
             subtitle: Text("Instituto Federal Catarinense"),
           ),
-          ...informacoes.map((info) => ListTile(
-                title: Text(info.tituloEscolaridade),
-                subtitle: Text(info.descricaoEscolaridade),
-              )),
+          ...informacoes
+              .where((info) => info.tituloEscolaridade.isNotEmpty)
+              .map((info) => ListTile(
+                    title: Text(info.tituloEscolaridade),
+                    subtitle: Text(info.descricaoEscolaridade),
+                  )),
         ],
       ),
     );
@@ -217,7 +252,7 @@ class Escolaridade extends StatelessWidget {
 }
 
 class Projetos extends StatelessWidget {
-  List<Informacoes> informacoes;
+  final List<Informacoes> informacoes;
 
   Projetos({required this.informacoes});
 
@@ -239,10 +274,12 @@ class Projetos extends StatelessWidget {
             title: Text("App de Receitas"),
             subtitle: Text("Aplicativo realizado em Flutter para consulta de receitas culinárias"),
           ),
-          ...informacoes.map((info) => ListTile(
-                title: Text(info.tituloProjeto),
-                subtitle: Text(info.descricaoProjeto),
-              )),
+          ...informacoes
+              .where((info) => info.tituloProjeto.isNotEmpty)
+              .map((info) => ListTile(
+                    title: Text(info.tituloProjeto),
+                    subtitle: Text(info.descricaoProjeto),
+                  )),
         ],
       ),
     );
@@ -250,7 +287,7 @@ class Projetos extends StatelessWidget {
 }
 
 class Recomendacoes extends StatelessWidget {
-  List<Informacoes> informacoes;
+  final List<Informacoes> informacoes;
 
   Recomendacoes({required this.informacoes});
 
@@ -276,10 +313,12 @@ class Recomendacoes extends StatelessWidget {
               "\"Yuri é um profissional talentoso e dedicado, com uma paixão por tecnologia e inovação. Ele tem habilidades técnicas impressionantes e é um excelente colaborador em equipe.\"",
             ),
           ),
-          ...informacoes.map((info) => ListTile(
-                title: Text(info.tituloRecomendacao),
-                subtitle: Text(info.descricaoRecomendacao),
-              )),
+          ...informacoes
+              .where((info) => info.tituloRecomendacao.isNotEmpty)
+              .map((info) => ListTile(
+                    title: Text(info.tituloRecomendacao),
+                    subtitle: Text(info.descricaoRecomendacao),
+                  )),
         ],
       ),
     );
