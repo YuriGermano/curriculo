@@ -12,6 +12,19 @@ class Curriculo extends StatefulWidget {
 class _CurriculoState extends State<Curriculo> {
   List<Informacoes> informacoes = [];
 
+  List<String> titulosEscolaridade = ["Ensino Médio", "Técnico em Informática para internet"];
+  List<String> descricoesEscolaridade = ["Instituto Federal Catarinense", "Instituto Federal Catarinense"];
+
+  List<String> titulosProjetos = ["App de Gerenciamento de gastos energéticos", "App de Incentivo ao transporte público"];
+  List<String> descricoesProjetos = [ "Aplicativo realizado em um projeto escolar para controle de gastos energéticos",
+    "Aplicativo realizado em um hackathon para incentivar o uso do transporte público.",
+  ];
+
+  List<String> titulosRecomendacoes = ["Prof. Heitor Scalco Neto", "Prof. Danimar Veriato"];
+  List<String> descricoesRecomendacoes = ["\"Excelente aluno, dedicado e sempre disposto a aprender, com ótimas habilidades de trabalho em equipe e resoluções de problemas.\"",
+    "\"Yuri é um profissional talentoso e dedicado, com uma paixão por tecnologia e inovação. Ele tem habilidades técnicas impressionantes e é um excelente colaborador em equipe.\"",
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,8 +86,20 @@ class _CurriculoState extends State<Curriculo> {
               trailing: Icon(Icons.chevron_right),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Escolaridade(informacoes: informacoes)),
-              ),
+                MaterialPageRoute(
+                    builder: (context) => Escolaridade(
+                          informacoes: informacoes,
+                          titulos: titulosEscolaridade,
+                          descricoes: descricoesEscolaridade,
+                          onDeletar: (index) {
+                            setState(() {
+                              informacoes.removeAt(index);
+                            });
+                          },
+                        )),
+              ).then((_) {
+                setState(() {});
+              }),
             ),
           ),
           Card(
@@ -84,8 +109,20 @@ class _CurriculoState extends State<Curriculo> {
               trailing: Icon(Icons.chevron_right),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Projetos(informacoes: informacoes)),
-              ),
+                MaterialPageRoute(
+                    builder: (context) => Projetos(
+                          informacoes: informacoes,
+                          titulos: titulosProjetos,
+                          descricoes: descricoesProjetos,
+                          onDeletar: (index) {
+                            setState(() {
+                              informacoes.removeAt(index);
+                            });
+                          },
+                        )),
+              ).then((_) {
+                setState(() {});
+              }),
             ),
           ),
           Card(
@@ -95,8 +132,20 @@ class _CurriculoState extends State<Curriculo> {
               trailing: Icon(Icons.chevron_right),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Recomendacoes(informacoes: informacoes)),
-              ),
+                MaterialPageRoute(
+                    builder: (context) => Recomendacoes(
+                          informacoes: informacoes,
+                          titulos: titulosRecomendacoes,
+                          descricoes: descricoesRecomendacoes,
+                          onDeletar: (index) {
+                            setState(() {
+                              informacoes.removeAt(index);
+                            });
+                          },
+                        )),
+              ).then((_) {
+                setState(() {});
+              }),
             ),
           ),
         ],
@@ -151,7 +200,10 @@ class FormularioCadastro extends StatelessWidget {
               Informacoes info = Informacoes(
                 tituloEscolaridade.text,
                 descricaoEscolaridade.text,
-                '', '', '', '',
+                '',
+                '',
+                '',
+                '',
               );
               Navigator.pop(context, info);
             },
@@ -165,10 +217,12 @@ class FormularioCadastro extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Informacoes info = Informacoes(
-                '', '',
+                '',
+                '',
                 tituloProjeto.text,
                 descricaoProjeto.text,
-                '', '',
+                '',
+                '',
               );
               Navigator.pop(context, info);
             },
@@ -182,7 +236,10 @@ class FormularioCadastro extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Informacoes info = Informacoes(
-                '', '', '', '',
+                '',
+                '',
+                '',
+                '',
                 tituloRecomendacao.text,
                 descricaoRecomendacao.text,
               );
@@ -216,13 +273,31 @@ class FormularioCadastro extends StatelessWidget {
   }
 }
 
-class Escolaridade extends StatelessWidget {
+class Escolaridade extends StatefulWidget {
   final List<Informacoes> informacoes;
+  final List<String> titulos;
+  final List<String> descricoes;
+  final Function(int) onDeletar;
 
-  Escolaridade({required this.informacoes});
+  Escolaridade(
+      {required this.informacoes,
+      required this.titulos,
+      required this.descricoes,
+      required this.onDeletar});
 
   @override
+  State<Escolaridade> createState() => _EscolaridadeState();
+}
+
+class _EscolaridadeState extends State<Escolaridade> {
+  @override
   Widget build(BuildContext context) {
+    final cadastrados = widget.informacoes
+        .asMap()
+        .entries
+        .where((e) => e.value.tituloEscolaridade.isNotEmpty)
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Escolaridade"),
@@ -231,33 +306,62 @@ class Escolaridade extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          ListTile(
-            title: Text("Ensino Médio"),
-            subtitle: Text("Instituto Federal Catarinense"),
-          ),
-          ListTile(
-            title: Text("Técnico em Informática para internet"),
-            subtitle: Text("Instituto Federal Catarinense"),
-          ),
-          ...informacoes
-              .where((info) => info.tituloEscolaridade.isNotEmpty)
-              .map((info) => ListTile(
-                    title: Text(info.tituloEscolaridade),
-                    subtitle: Text(info.descricaoEscolaridade),
-                  )),
+          ...widget.titulos.asMap().entries.map((e) => ListTile(
+                title: Text(e.value),
+                subtitle: Text(widget.descricoes[e.key]),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      widget.titulos.removeAt(e.key);
+                      widget.descricoes.removeAt(e.key);
+                    });
+                  },
+                ),
+              )),
+          ...cadastrados.map((e) => ListTile(
+                title: Text(e.value.tituloEscolaridade),
+                subtitle: Text(e.value.descricaoEscolaridade),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      widget.onDeletar(e.key);
+                    });
+                  },
+                ),
+              )),
         ],
       ),
     );
   }
 }
 
-class Projetos extends StatelessWidget {
+class Projetos extends StatefulWidget {
   final List<Informacoes> informacoes;
+  final List<String> titulos;
+  final List<String> descricoes;
+  final Function(int) onDeletar;
 
-  Projetos({required this.informacoes});
+  Projetos(
+      {required this.informacoes,
+      required this.titulos,
+      required this.descricoes,
+      required this.onDeletar});
 
   @override
+  State<Projetos> createState() => _ProjetosState();
+}
+
+class _ProjetosState extends State<Projetos> {
+  @override
   Widget build(BuildContext context) {
+    final cadastrados = widget.informacoes
+        .asMap()
+        .entries
+        .where((e) => e.value.tituloProjeto.isNotEmpty)
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Projetos"),
@@ -266,33 +370,62 @@ class Projetos extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          ListTile(
-            title: Text("App de Gerenciamento de gastos energéticos"),
-            subtitle: Text("Aplicativo realizado em um projeto escolar para controle de gastos energéticos"),
-          ),
-          ListTile(
-            title: Text("App de Incentivo ao transporte público"),
-            subtitle: Text("Aplicativo realizado em um hackathon para incentivar o uso do transporte público."),
-          ),
-          ...informacoes
-              .where((info) => info.tituloProjeto.isNotEmpty)
-              .map((info) => ListTile(
-                    title: Text(info.tituloProjeto),
-                    subtitle: Text(info.descricaoProjeto),
-                  )),
+          ...widget.titulos.asMap().entries.map((e) => ListTile(
+                title: Text(e.value),
+                subtitle: Text(widget.descricoes[e.key]),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      widget.titulos.removeAt(e.key);
+                      widget.descricoes.removeAt(e.key);
+                    });
+                  },
+                ),
+              )),
+          ...cadastrados.map((e) => ListTile(
+                title: Text(e.value.tituloProjeto),
+                subtitle: Text(e.value.descricaoProjeto),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      widget.onDeletar(e.key);
+                    });
+                  },
+                ),
+              )),
         ],
       ),
     );
   }
 }
 
-class Recomendacoes extends StatelessWidget {
+class Recomendacoes extends StatefulWidget {
   final List<Informacoes> informacoes;
+  final List<String> titulos;
+  final List<String> descricoes;
+  final Function(int) onDeletar;
 
-  Recomendacoes({required this.informacoes});
+  Recomendacoes(
+      {required this.informacoes,
+      required this.titulos,
+      required this.descricoes,
+      required this.onDeletar});
 
   @override
+  State<Recomendacoes> createState() => _RecomendacoesState();
+}
+
+class _RecomendacoesState extends State<Recomendacoes> {
+  @override
   Widget build(BuildContext context) {
+    final cadastrados = widget.informacoes
+        .asMap()
+        .entries
+        .where((e) => e.value.tituloRecomendacao.isNotEmpty)
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Recomendações"),
@@ -301,24 +434,31 @@ class Recomendacoes extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          ListTile(
-            title: Text("Prof. Heitor Scalco Neto"),
-            subtitle: Text(
-              "\"Excelente aluno, dedicado e sempre disposto a aprender, com ótimas habilidades de trabalho em equipe e resoluções de problemas.\"",
-            ),
-          ),
-          ListTile(
-            title: Text("Prof. Danimar Veriato"),
-            subtitle: Text(
-              "\"Yuri é um profissional talentoso e dedicado, com uma paixão por tecnologia e inovação. Ele tem habilidades técnicas impressionantes e é um excelente colaborador em equipe.\"",
-            ),
-          ),
-          ...informacoes
-              .where((info) => info.tituloRecomendacao.isNotEmpty)
-              .map((info) => ListTile(
-                    title: Text(info.tituloRecomendacao),
-                    subtitle: Text(info.descricaoRecomendacao),
-                  )),
+          ...widget.titulos.asMap().entries.map((e) => ListTile(
+                title: Text(e.value),
+                subtitle: Text(widget.descricoes[e.key]),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      widget.titulos.removeAt(e.key);
+                      widget.descricoes.removeAt(e.key);
+                    });
+                  },
+                ),
+              )),
+          ...cadastrados.map((e) => ListTile(
+                title: Text(e.value.tituloRecomendacao),
+                subtitle: Text(e.value.descricaoRecomendacao),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      widget.onDeletar(e.key);
+                    });
+                  },
+                ),
+              )),
         ],
       ),
     );
