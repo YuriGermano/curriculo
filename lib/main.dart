@@ -267,12 +267,12 @@ class Projetos extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            title: Text("App de Vendas"),
-            subtitle: Text("Aplicativo realizado em Flutter para controle de vendas e estoque"),
+            title: Text("App de Gerenciamento de gastos energéticos"),
+            subtitle: Text("Aplicativo realizado em um projeto escolar para controle de gastos energéticos"),
           ),
           ListTile(
-            title: Text("App de Receitas"),
-            subtitle: Text("Aplicativo realizado em Flutter para consulta de receitas culinárias"),
+            title: Text("App de Incentivo ao transporte público"),
+            subtitle: Text("Aplicativo realizado em um hackathon para incentivar o uso do transporte público."),
           ),
           ...informacoes
               .where((info) => info.tituloProjeto.isNotEmpty)
@@ -308,7 +308,7 @@ class Recomendacoes extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text("Jensen Huang"),
+            title: Text("Prof. Danimar Veriato"),
             subtitle: Text(
               "\"Yuri é um profissional talentoso e dedicado, com uma paixão por tecnologia e inovação. Ele tem habilidades técnicas impressionantes e é um excelente colaborador em equipe.\"",
             ),
