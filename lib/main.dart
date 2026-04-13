@@ -59,7 +59,7 @@ class _CurriculoState extends State<Curriculo> {
             child: SizedBox(
               width: 600,
               child: Text(
-                "Olá, me chamo Yuri, sou uma pessoa dedicada e apaixonada por tecnologia comprometida com o aprendizado.",
+                "Olá, me chamo Yuri, sou uma pessoa dedicada e apaixonada por tecnologia.",
               ),
             ),
           ),
